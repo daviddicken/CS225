@@ -5,5 +5,4 @@
 Lab one was simple
 
 ##Lab2 
-
-
+lab2 was a little harder

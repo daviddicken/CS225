@@ -1,23 +1,31 @@
 #!/bin/bash
 
-echo "Please enter a number: "
-read NUM
+VALID="false"
 
-if [[ -z $NUM ]] ;then
-   echo "No input."
-else
-  expr $NUM + 1 1>/dev/null                   #test if integer
-   if [ $? = 0 ] ;then
-      if [[ "$NUM" != '0' ]] ;then
-         if ((NUM%2==0)) ;then
-            echo "${NUM} is a even number."
-         else
-            echo "${NUM} is a odd number."
-         fi
-      else
-        echo "${NUM} is a even number."
-      fi 
-   else
-     echo "Invalid number."
-   fi
-fi
+while [ "$VALID" = 'false' ]
+do
+	echo "Please enter a number: "
+	read NUM
+
+	if [[ -z $NUM ]] ;then
+		echo "No input."
+		VALID="false"
+	elif [[ $NUM =~ ^[+]?[-]?[0-9]+$ ]] ;then 
+		if [[ "$NUM" != '0' ]] ;then
+			NUM1=$(echo $NUM | sed 's/^[+-0]*//')
+			if ((NUM1%2==0)) ;then
+				echo "${NUM} is a even number."
+				VALID="true"
+			else
+				echo "${NUM} is a odd number."
+				VALID="true"
+			fi
+		else
+			echo "${NUM} is a even number."
+			VALID="true"
+		fi 
+	else
+		echo "${NUM} is a invalid number."
+		VALID="false"
+	fi
+done

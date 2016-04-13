@@ -3,7 +3,7 @@
 echo "Please enter a number: "
 read NUM
 
-expr $NUM + 0 2> /dev/null #try's to do math and returns a error code
+expr $NUM + 0 1> /dev/null #try's to do math and returns a error code
 if [ $? = 0 ] ;then 
      if   [[ "$NUM" -gt '5' ]] ;then
               echo "${NUM} is greater then 5"

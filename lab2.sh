@@ -6,13 +6,13 @@ while [ "$VALID" = 'false' ]
 do
 	echo "Please enter a number: "
 	read NUM
-
-	if [[ -z $NUM ]] ;then
+        NUM2=$(echo $NUM | sed 's/[.].*$//')
+	if [[ -z $NUM2 ]] ;then
 		echo "No input."
 		VALID="false"
-	elif [[ $NUM =~ ^[+]?[-]?[0-9]+$ ]] ;then 
+	elif [[ $NUM2 =~ ^[+]?[-]?[0-9]+$ ]] ;then 
 		if [[ "$NUM" != '0' ]] ;then
-			NUM1=$(echo $NUM | sed 's/^[+-0]*//')
+			NUM1=$(echo $NUM2 | sed 's/^[+-0]*//')
 			if ((NUM1%2==0)) ;then
 				echo "${NUM} is a even number."
 				VALID="true"

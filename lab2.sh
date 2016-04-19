@@ -7,11 +7,12 @@ do
 	echo "Please enter a number: "
 	read NUM
         NUM2=$(echo $NUM | sed 's/[.].*$//')
-	if [[ -z $NUM2 ]] ;then
+	if [[ -z $NUM ]] ;then
 		echo "No input."
 		VALID="false"
 	elif [[ $NUM2 =~ ^[+]?[-]?[0-9]+$ ]] ;then 
 		if [[ "$NUM" != '0' ]] ;then
+#		if [[ "$NUM" <= '-1' |  "NUM1" >= '1' ]]
 			NUM1=$(echo $NUM2 | sed 's/^[+-0]*//')
 			if ((NUM1%2==0)) ;then
 				echo "${NUM} is a even number."

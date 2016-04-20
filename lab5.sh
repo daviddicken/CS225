@@ -1,31 +1,23 @@
 #!/bin/bash
 
-IFS=$'\n'
-
 FILE=$( cat ~/medialab/medialist.txt)
-DIR=$( ls ~/medialab )
-FOUND="no"
+MAIN=~/medialab
+Found='0'
+Lost='0'
 
-for ListLine in $FILE ;do
-	for MPGdir in $DIR ;do
-		if [[ $ListLine = $MPGdir ]]
-		then
-		#	echo "Found $ListLine, adding to foundfiles.txt"
-			#echo $ListLine >> foundfiles.txt
-			FOUND="yes"
-		#fi
-		#if [[ $FOUND = 'no' ]] 
-		#then
-		#else
-		#	echo "Item $ListLine not found, adding to lostfiles.txt"
-			#echo $ListLine >> lostfiles.txt
-		fi
-	done
-	if [[ $FOUND = 'yes' ]]
+rm lostfiles.txt
+rm foundfiles.txt
+
+for LINE in $FILE ;do
+	if [[ -e $MAIN/$LINE ]]
 	then
 		echo $ListLine >> foundfiles.txt
+		(( Found++ ))
 	else	
 		echo $ListLine >> lostfiles.txt
+		(( Lost++ ))
 	fi
-FOUND="no" 
 done
+echo "Lost - $Lost"
+echo "Found - $Found"
+

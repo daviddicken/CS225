@@ -1,6 +1,6 @@
 #!/bin/bash
 
-xmlLIST=$( sort ~/medialab/media.xml | uniq | grep "filename" | awk -F'>' '{ print $2 }' | awk -F'<' '{ print $1 }' | grep -vwE "(NULL)" )
+xmlLIST=$( grep "filename" ~/medialab/media.xml | awk -F'>' '{ print $2 }' | awk -F'<' '{ print $1 }' | sort | uniq | grep -vwE "(NULL)" )
 
 labLIST=$( ls ~/medialab | grep "\.mp"  )
 

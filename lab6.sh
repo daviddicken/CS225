@@ -7,9 +7,6 @@ labLIST=$( ls ~/medialab | grep "\.mp"  )
 LAB=~/medialab 
 XML=~/medialab/media.xml
 
-NOTnLAB='0'
-NOTnXML='0'
-
 rm -f NOTnMEDIALAB.txt
 rm -f NOTnXML.txt
 
@@ -22,20 +19,20 @@ for LINE in $xmlLIST ;do
 	:	
 	else	
 		echo $LINE >> NOTnMEDIALAB.txt
-		(( NOTnLAB++ ))
+		(( NOTnLABcounter++ ))
 	fi
 done
 
-for Line in $labLIST ;do
-	if [[ -e $XML/$Line ]]
+for LINE in $labLIST ;do
+	if [[ -e $XML/$LINE ]]
 	then
 	:
 	else
-		echo $Line >> NOTnXML.txt
-		(( NOTnXML++ ))
+		echo $LINE >> NOTnXML.txt
+		(( NOTnXMLcounter++ ))
 	fi
 done
 
-echo "$NOTnXML"
-echo "$NOTnLAB"
+echo "$NOTnXMLcounter media files in medialab directory that are NOT listed in media.xml."
+echo "$NOTnLABcounter media files in media.xml that are NOT in medialab directory."
 

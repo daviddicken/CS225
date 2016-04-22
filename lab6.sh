@@ -1,24 +1,41 @@
 #!/bin/bash
 
-FILE=$( cat ~/medialab/medialist.txt)
-MAIN=~/medialab
-Found='0'
-Lost='0'
+xmlLIST=$( cat ~/medialab/media.xml | grep "\.mp" | awk -F'>' '{ print $2 }' | awk -F'<' '{ print $1 }' )
 
-rm -f lostfiles.txt
-rm -f foundfiles.txt
+labLIST=$( ls ~/medialab | grep "\.mp"  )
 
-for LINE in $FILE ;do
-	if [[ -e $MAIN/$LINE ]]
+LAB=~/medialab 
+XML=~/medialab/media.xml
+
+NOTnLAB='0'
+NOTnXML='0'
+
+rm -f NOTnMEDIALAB.txt
+rm -f NOTnXML.txt
+
+echo "Files not in medialab directory:" >> NOTnMEDIALAB.txt
+echo "Files not in media.xml:" >> NOTnXML.txt 
+
+for LINE in $xmlLIST ;do
+	if [[ -e $LAB/$LINE ]]
 	then
-		echo $LINE >> foundfiles.txt
-		(( Found++ ))
+	:	
 	else	
-		echo $LINE >> lostfiles.txt
-		(( Lost++ ))
+		echo $LINE >> NOTnMEDIALAB.txt
+		(( NOTnLAB++ ))
 	fi
 done
 
-echo "Lost - $Lost"
-echo "Found - $Found"
+for Line in $labLIST ;do
+	if [[ -e $XML/$Line ]]
+	then
+	:
+	else
+		echo $Line >> NOTnXML.txt
+		(( NOTnXML++ ))
+	fi
+done
+
+echo "$NOTnXML"
+echo "$NOTnLAB"
 

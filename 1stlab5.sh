@@ -1,5 +1,6 @@
 #!/bin/bash
 
+oldIFS=$IFS
 IFS=$'\n'
 
 FILE=$( cat ~/medialab/medialist.txt)
@@ -22,5 +23,6 @@ for ListLine in $FILE ;do
 FOUND="no" 
 done
 
+IFS=$oldIFS
 
 # if [[ $ListLine -e ~/medialab ]]

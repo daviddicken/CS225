@@ -1,23 +1,20 @@
 #!/bin/bash
+shopt -s extglob
 
-if [[ -z $1 ]]
+path=$1
+
+if [[ -z $path ]]
 then
 	echo "Try 'basename --help' for more information."
 	exit
-elif [[ $1 == / ]]
+elif [[ $path == / ]]
 then
 	echo "/"
 	exit
 fi
 
-path=$1
-
+path=${path%%+(/)}
 file=${path##*/}
 
-if [[ -z $file ]]
-then
-	path=${path%/*};file=${path##*/}
-	echo "$file"
-else
-	echo "$file"	
-fi
+echo "$file"
+

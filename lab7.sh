@@ -4,6 +4,10 @@ if [[ -z $1 ]]
 then
 	echo "Try 'basename --help' for more information."
 	exit
+elif [[ $1 == / ]]
+then
+	echo "/"
+	exit
 fi
 
 path=$1

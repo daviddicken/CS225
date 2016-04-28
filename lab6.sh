@@ -8,8 +8,8 @@ LAB=~/medialab
 oldIFS=$IFS 
 IFS=$'\n'
 
-NOTnXMLcounter='0'
-NOTnLABcounter='0'
+#NOTnXMLcounter='0'
+#NOTnLABcounter='0'
 
 echo "Files not in media.xml:"
 for LINE in $labLIST ;do

@@ -16,5 +16,9 @@ fi
 path=${path%%+(/)}
 file=${path##*/}
 
-echo "$file"
-
+if [[ -z $file ]]
+then
+	echo "/"
+else
+	echo "$file"
+fi

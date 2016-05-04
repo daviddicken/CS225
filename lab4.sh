@@ -9,6 +9,7 @@ if [[ $CLEAN =~ ^[0-9]+$ && $CLEAN -gt '49' && $CLEAN -lt '101' ]] ;then
 	echo "Good job, ${NUM} is a number between 50 - 100."
 else
 	echo "Sorry ${NUM} is not a number between 50 - 100"
+	exit 1
 fi
 
 

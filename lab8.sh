@@ -4,7 +4,7 @@ file=$( tail -n1 /var/share/CS225/addresses.csv )
 
 file=${file#\"}
 FNAME=${file%%\"*}
-file=${file#*\"};file=${file#*\"}
+file=${file#*\",\"} #;file=${file#*\"}
 LNAME=${file%%\"*}
 file=${file#*\"};file=${file#*\"}
 COMPANY=${file%%\"*}

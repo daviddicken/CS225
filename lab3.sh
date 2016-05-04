@@ -3,7 +3,7 @@
 if [[ "$USER" =  "root" ]] ;then
 	echo "It is insecure to run this program as root"
 	exit
-elif [[ "$UID" -lt "500" ]] ;then
+elif [[ "$EUID" -lt "500" ]] ;then
 	echo "The user id is less then 500"
 	exit
 fi

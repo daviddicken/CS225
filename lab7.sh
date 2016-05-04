@@ -13,7 +13,7 @@ then
 	exit
 fi
 
-path=${path%%+(/)}
+path=${path%%+(/)}  #gets rid off trailing /'s
 file=${path##*/}
 
 if [[ -z $file ]]

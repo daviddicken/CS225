@@ -1,29 +1,32 @@
 #!/bin/bash
 
-file=$( tail -n1 /var/share/CS225/addresses.csv )
+searchFile=/var/share/CS225/addresses.csv
+
+file=$( tail -n1 $searchFile )
 
 file=${file#\"}
 FNAME=${file%%\"*}
-file=${file#*\",\"} #;file=${file#*\"}
+file=${file#*,\"} 
 LNAME=${file%%\"*}
-file=${file#*\"};file=${file#*\"}
+file=${file#*,\"}
 COMPANY=${file%%\"*}
-file=${file#*\"};file=${file#*\"}
+file=${file#*,\"}
 STREET=${file%%\"*}
-file=${file#*\"};file=${file#*\"}
+file=${file#*,\"}
 CITY=${file%%\"*}
-file=${file#*\"};file=${file#*\"}
-file=${file#*\"};file=${file#*\"}
+file=${file#*,\"}
+COUNTY=${file%%\"*}
+file=${file#*,\"}
 STATE=${file%%\"*}
-file=${file#*\"};file=${file#*\"}
+file=${file#*,\"}
 ZIP=${file%%\"*}
-file=${file#*\"};file=${file#*\"}
+file=${file#*,\"}
 HPHONE=${file%%\"*}
-file=${file#*\"};file=${file#*\"}
+file=${file#*,\"}
 WPHONE=${file%%\"*}
-file=${file#*\"};file=${file#*\"}
+file=${file#*,\"}
 EMAIL=${file%%\"*}
-file=${file#*\"};file=${file#*\"}
+file=${file#*,\"}
 WEBURL=${file%%\"*}
 
 echo "First name:	$FNAME"

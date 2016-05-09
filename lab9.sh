@@ -25,14 +25,14 @@ while getopts :dvhn:l: opt ;do
 				if [  "$VERBOSE" == "true" ]
 					then ls -l $dir
 					else ls $dir
-				fi;;
+				fi ;;
 			[nN]|[nN][oO]) : ;;
 			*)
 				echo "Invalid answer."
 				exit 1 ;;
 			esac
 		 ;;
-                *) echo "Try '$scriptName --help' for more information."
+                *) echo "Try '$scriptName -h' for more information."
 		    exit 1 ;;
         esac
 done

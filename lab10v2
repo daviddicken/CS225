@@ -1,0 +1,87 @@
+#!/bin/bash
+
+CLEANUP()
+{
+	rm -Rf $TMP
+	rm -Rf $SAVEFILE
+	exit
+}
+
+trap "CLEANUP" SIGINT
+
+SCRIPTNAME=${0##*/}
+VAR=$(ls -1Ra /*)
+TMP=$(mktemp)
+COUNT="0"
+
+
+while getopts :vs:ch opt ;do
+	case $opt in
+		v) VERBOSE='true' ;;
+		s) SAVEFILE="$OPTARG" ;;
+		c) CLEANTEMP='true' ;;
+		h) echo "Usage: $SCRIPTNAME [options]"
+		   echo "	$SCRIPTNAME -s SAVEFILE"
+		   echo " "
+		   echo "Options:"
+		   echo " -v	turns on VERBOSE (saves complete path to each file)"
+		   echo " -s	saves temporary file created to location and filename given"
+		   echo " -c	cleanup temp file when done"
+		   echo " -h	prints out help page"
+		CLEANUP
+		exit 
+		;;
+		*) echo "Invalid Option: Try '$SCRIPTNAME -h' for more information." 
+		CLEANUP 
+		exit 1
+		;;
+		esac
+done
+shift $(($OPTIND-1))
+
+# Saves full path or just filename to temp file depending on VERBOSE option
+if [ "$VERBOSE" == "true" ] ;then
+	for LINE in $VAR ;do
+		if [[ ( "$LINE" == "." ) || ( "$LINE" == ".." ) ]] ;then
+			:
+		else
+			((COUNT++))
+			echo "File "$COUNT": "$LINE""
+		fi
+	done  >> $TMP
+else
+	for LINE in $VAR ;do
+		if [[ ( "$LINE" == "." ) || ( "$LINE" == ".." ) ]] ;then
+			:
+		else
+			LINE=${LINE##*/}
+			((COUNT++))
+			echo "File "$COUNT": "$LINE""
+		fi
+	done >> $TMP
+fi
+
+# copy temp file to file user submited
+if [ -z "$SAVEFILE" ] ;then
+	:
+else
+	cat "$TMP" >> "$SAVEFILE" 
+fi
+
+# cleanup temp file if option is selected
+if [ "$CLEANTEMP" == "true" ] ;then
+	rm -Rf $TMP
+fi
+
+
+#echo $VAR
+#tmp=$(mktemp)
+
+#echo $VAR >> $tmp
+
+#echo $tmp
+
+#read blank
+
+#cleanup
+

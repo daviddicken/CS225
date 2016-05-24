@@ -2,24 +2,24 @@
 
 checkDir()
 {
-if [ ! -d "${DIRECTORY}/${YEAR}/${MONTH}/${DAY}" ] ;then
-         mkdir -p "${DIRECTORY}/${YEAR}/${MONTH}/${DAY}"
+if [ ! -d "$1" ] ;then #"${DIRECTORY}/${YEAR}/${MONTH}/${DAY}" ] ;then
+         mkdir -p "$1" #"${DIRECTORY}/${YEAR}/${MONTH}/${DAY}"
 fi
 }
 
 copy()
 {
-cp $LINE "$DIRECTORY/${YEAR}/${MONTH}/${DAY}"
+cp $1 $2 #"$DIRECTORY/${YEAR}/${MONTH}/${DAY}"
 }
 
 move()
 {
-mv $LINE "$DIRECTORY/${YEAR}/${MONTH}/${DAY}"
+mv $1 $2 #"$DIRECTORY/${YEAR}/${MONTH}/${DAY}"
 }
 
 getTimeStamp()
 {
-TMP=$(stat --format '%y' "$LINE")
+TMP=$(stat --format '%y' "$1")
 TMP=${TMP%%' '*}
 YEAR=${TMP%%-*}
 TMP=${TMP#*-}
@@ -28,3 +28,7 @@ TMP=${TMP#*-}
 DAY=${TMP%%-*}
 }
 
+noDave()
+{
+echo "     I can\'t stop now DAVE"
+}

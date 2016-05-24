@@ -1,10 +1,10 @@
 #!/bin/bash
-trap "echo         I can't stop now DAVE" SIGINT
 . ~/projects/CS225/functionLibrary.sh
+trap "noDave" SIGINT
 
-sCRIPTNAME=${0##*/}
-DIRECTORY=~/timefiles
-LSDIR=$(find $DIRECTORY)
+SCRIPTNAME=${0##*/}
+DIRECTORY=$1
+LSDIR=$(find $DIRECTORY -maxdepth 1)
 
 while getopts :fh opt ;do
 	case $opt in
@@ -24,26 +24,18 @@ done
 shift $(($OPTIND-1))
 
 for LINE in $LSDIR ;do
+#sleep 0.2
 	if [ ! -d $LINE ] ;then
-		getTimeStamp
-		checkDir
+		#echo "Proccessing "$LINE""
+		getTimeStamp "$LINE"
+		LOCATION="${DIRECTORY}/${YEAR}/${MONTH}/${DAY}"
+		checkDir "$LOCATION"
 		if [ -z $FORCE ] ;then
-			copy
+			copy "$LINE" "$LOCATION"
 		else			
-			move
+			move "$LINE" "$LOCATION"
 		fi	
 	fi
 done
 
 
-
-
-#FILELINE=$(stat --format '%y'
-
-#echo "$DIRECTORY"
-#for LINE in $DIRECTORY ;do
-#	LINE=${LINE#' '}
-#	echo "$LINE"
-#done
-
-#VAR=${

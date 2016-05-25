@@ -1,0 +1,47 @@
+#!/bin/bash
+. ~/projects/CS225/functionLibrary.sh
+trap "noDave" SIGINT
+
+SCRIPTNAME=${0##*/}
+DIRECTORY=$1
+LSDIR=$(find $DIRECTORY -maxdepth 1)
+
+while getopts :fh opt ;do
+	case $opt in
+		f) FORCE='true' ;;
+		h) echo "Usage: $SCRIPTNAME [options]"
+		   echo " "
+		   echo "Options:"
+		   echo " -f	forces file to be moved instead of copying them"
+		   echo " -h	prints out help page"
+		   exit 0
+		;;
+		*) echo "Invalid Option: Try '$SCRIPTNAME -h' for more information."
+		   exit 1
+		;;
+		esac
+done
+shift $(($OPTIND-1))
+
+for LINE in $LSDIR ;do
+#sleep 0.2
+	if [ ! -d $LINE ] ;then
+		#echo "Proccessing "$LINE""
+		getTimeStamp "$LINE"
+		LOCATION="${DIRECTORY}/${YEAR}/${MONTH}/${DAY}"
+		checkDir "$LOCATION"
+		if [ -z $FORCE ] ;then
+			copy "$LINE" "$LOCATION"
+		else	
+			TMP=$(mktemp)
+			copy "$LINE" "$TMP"		
+		       #	move "$LINE" "$LOCATION"
+		fi	
+	fi
+done
+
+if [ !-z $TMP ] ;then
+	 move "$TMP" "$DIRECTORY"
+fi
+
+

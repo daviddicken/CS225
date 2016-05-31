@@ -35,7 +35,7 @@ MONTH=$(convertMonth $MONTH)
 
 noDave()
 {
-echo "     I can\'t stop now DAVE"
+echo "     Sorry Dave, I'm afraid I can't allow you to do that..."
 }
 
 convertMonth()
@@ -56,3 +56,16 @@ case $1 in
 	*) ;;
 esac
 }
+
+theTRAP()
+{
+opt1=$1
+opt2=$2
+opt3=$3
+
+case $opt1 in
+	exit) trap "$( exit)" ;;
+	noexit) trap "noDave" ;;
+
+}
+

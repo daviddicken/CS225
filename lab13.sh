@@ -10,7 +10,7 @@ if [ -z $1 ] ;then
 	echo "Social Security number"
 	echo "Phone Number"
 	echo "Credit Card Number or"
-	echo "Ip address - As a argument."
+	echo "Ip address - As an argument."
 else
 	NUM=$1
 

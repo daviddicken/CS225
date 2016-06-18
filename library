@@ -1,1 +1,181 @@
-#!/bin/bash
+#Final Functions
+
+###################### exiftool functions ###################################
+exifToolInstall()
+{
+yum install -y perl-Image-ExifTool.noarch
+
+}
+
+getAll() # want to figure out how to use this instead if time allows
+{
+FILE=$1
+exiftool -T -filename -MIMEType -Make -Model -CreateDate -FileModifyDate $FILE
+}
+
+exiftoolUse()
+{
+FILE=$1
+WORD=$2
+exiftool -s $FILE | grep -w "$WORD" | awk -F ': ' '{ print $2 }'
+}
+
+getMake()
+{
+FILE=$1
+exiftoolUse $FILE Make
+}
+
+getModel()
+{
+FILE=$1
+exiftoolUse $FILE Model
+}
+
+getType()
+{
+FILE=$1
+exiftoolUse $FILE MIMEType
+}
+
+getCreate()
+{
+FILE=$1
+exiftoolUse $FILE CreateDate | tr ' ' '_' | tr ':' '-'
+}
+
+getMod()
+{
+FILE=$1
+exiftoolUse $FILE FileModifyDate | tr ' ' '_' | tr ':' '-'
+}
+getExt()
+{
+FILE=$1
+exiftool -s $FILE | grep -w "FileName" | awk -F '.' '{ print tolower($2) }'
+}
+###################### FUNCTIONS TO COPY FILES ##############################
+## Make directory path for current file
+makeDirs()
+{
+DATE=$1 TEMP=$2
+YEAR=${DATE%%'-'*} ;    DATE=${DATE#*'-'}
+MONTH=${DATE%%'-'*};    DATE=${DATE#*'-'}
+DAY=${DATE%%'_'*}
+
+mkdir -p "$TEMP"/"$YEAR"/"$MONTH"/"$DAY"
+}
+
+## Create new name for current file
+getNewName()
+{
+DATE=$1 MAKE=$2 MODEL=$3 EXT=$4 ARR=($MODEL)
+
+if [[ $MAKE = $ARR ]] ;then
+        echo ""$DATE"_"$MODEL"_."$EXT"" | tr ' ' '-'
+else
+        echo ""$DATE"_"$MAKE"-"$MODEL"_."$EXT"" | tr ' ' '-'
+fi
+}
+
+## Checks if file exsist and is the same changes name and if it is different then copies file.
+JSAME="0" MSAME="0" JCOPIED="0" MCOPIED="0"
+copy2temp()
+{
+ORG=$1 NEW=$2 TEMP=$3 FROM=$4 TYPE=$5 X="false" COUNTER="1" 
+makeDirs $NEW $TEMP
+TO="$TEMP"/"$YEAR"/"$MONTH"/"$DAY"
+touch ~/removelist.txt
+
+while [[ $X = false ]] ;do
+        if [[ -e "$TO"/"$NEW" ]] ;then
+
+                TOFILE=`md5sum "$TO"/"$NEW" | awk '{ print $1 }'`
+                FROMFILE=`md5sum "$FROM" | awk '{ print $1 }'` #($(md5sum "$ORG"))
+                if [[ $TOFILE = $FROMFILE ]] ;then
+                        X="true"
+                        echo ""$ORG" not copied"
+                        echo "$ORG" >> ~/removelist.txt
+			if [[ "$TYPE" == "image"* ]] ;then
+				((JSAME++))
+			else
+				((MSAME++))
+			fi
+                else
+                        NEW=${NEW/_*./_$COUNTER.}
+                        echo "Added counter to end of "$NEW""
+                        ((COUNTER++))
+                fi
+        else
+                cp "$FROM" "$TO"/"$NEW"
+                if [[ $? = 0 ]] ;then
+                        echo "$ORG" >> ~/removelist.txt
+                        echo "Copied "$ORG" to "$NEW""
+                        echo "Copied "$ORG" too "$TO"/"$NEW"" >> /root/statfiles.txt
+			if [[ "$TYPE" == "image"* ]] ;then
+				((JCOPIED++))
+			else
+				((MCOPIED++))
+			fi
+                fi
+                X="true"
+        fi
+done
+
+}
+
+output()
+{
+echo "The number of JPEGs copied/moved:	"$JCOPIED""
+echo "The number of JPEGs that were the same and not copied:"$JSAME""
+echo "The number of movies copied/moved:"$MCOPIED""
+echo "The number of movies that were the same and were not copied:"$MSAME""
+}
+getFinalFolder()
+{
+COUNTER=" "
+FOLDER="Photo"
+HOME=~
+while [[ -d "$HOME"/"$FOLDER" ]] ;do
+        ((COUNTER++))
+        FOLDER="Photo"
+        FOLDER="$FOLDER""$COUNTER"
+done
+echo "$FOLDER"
+}
+
+finalMove()
+{
+FROM=$1 LOC=~ TO=$3
+mv "$FROM" "$LOC"/"$TO"
+}
+
+removeOld()
+{
+ORGDIR=$1
+RML=$( cat ~/removelist.txt )
+for LINE in $RML ;do
+	echo "Deleting "$LINE""
+        rm -f "$ORGDIR"/"$LINE"
+done
+cleanup
+}
+
+
+################# CLEANUP AND MISC FUNCTIONS ###########################
+
+cleanup()
+{
+rm -Rf "$TMP"
+rm -f /root/tmp/removelist
+}
+
+trapCleanup()
+{
+rm -Rf $TMP
+rm -f /root/tmp/removelist
+exit 1
+}
+
+
+

@@ -127,10 +127,11 @@ done
 
 output()
 {
-echo "The number of JPEGs copied/moved:	"$JCOPIED""
-echo "The number of JPEGs that were the same and not copied:"$JSAME""
-echo "The number of movies copied/moved:"$MCOPIED""
-echo "The number of movies that were the same and were not copied:"$MSAME""
+JCOPY=$1 MCOPY=$2 JSAME=$3 MSAME=$4
+echo "The number of JPEGs copied/moved:		"$JCOPY""
+echo "The number of movies copied/moved:	"$MCOPY""
+echo "The number of JPEGs that were the same and not copied:		"$JSAME""
+echo "The number of movies that were the same and were not copied:	"$MSAME""
 }
 getFinalFolder()
 {

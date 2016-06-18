@@ -9,6 +9,7 @@ SCRIPTNAME=${0##*/}
 #MEDIAdir=/root/finalfiles   #remove after you un comment read MEDIAdir
 LIST=$(ls $MEDIAdir)
 TMP=$(mktemp -d)
+JCOPY="0" MCOPY="0" JSAME="0" MSAME="0"
 
 while getopts :fdh opt ;do
 	case $opt in 
@@ -59,7 +60,13 @@ for LINE in $LIST ;do
 	       
 	        EXT=$( getExt "$LOCATION" )
 		NEWNAME=$( getNewName "$CREATED" "$MAKE" "$MODEL" "$EXT" )
-		copy2temp "$LINE" "$NEWNAME" "$TMP" "$LOCATION" "$TYPE" 
+		RESULT=$( copy2temp "$LINE" "$NEWNAME" "$TMP" "$LOCATION" "$TYPE" )
+		case $RESULT in
+			1) ((JCOPY++)) ;;
+			2) ((MCOPY++)) ;;
+			3) ((JSAME++)) ;;
+			4) ((MSAME++)) ;;
+		esac 
 	fi
 done
 
@@ -70,7 +77,7 @@ if [[ $FORCE = true ]] ;then
 fi
 
 cleanup
-output
+output "$JCOPY" "$MCOPY" "$JSAME" "$MSAME"
 
 
 

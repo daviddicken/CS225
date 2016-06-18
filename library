@@ -1,3 +1,4 @@
+#!/bin/bash
 #Final Functions
 
 ###################### exiftool functions ###################################
@@ -79,10 +80,9 @@ fi
 }
 
 ## Checks if file exsist and is the same changes name and if it is different then copies file.
-JSAME="0" MSAME="0" JCOPIED="0" MCOPIED="0"
 copy2temp()
 {
-ORG=$1 NEW=$2 TEMP=$3 FROM=$4 TYPE=$5 X="false" COUNTER="1" 
+ORG=$1 NEW=$2 TEMP=$3 FROM=$4 TYPE=$5 X="false" COUNTER="1" RETURNVAL="0"
 makeDirs $NEW $TEMP
 TO="$TEMP"/"$YEAR"/"$MONTH"/"$DAY"
 touch ~/removelist.txt
@@ -97,13 +97,13 @@ while [[ $X = false ]] ;do
                         echo ""$ORG" not copied"
                         echo "$ORG" >> ~/removelist.txt
 			if [[ "$TYPE" == "image"* ]] ;then
-				((JSAME++))
+				RETURNVAL="3"
 			else
-				((MSAME++))
+				RETURNVAL="4"
 			fi
                 else
+			echo "Adding "$COUNTER" to the end of "$NEW"."
                         NEW=${NEW/_*./_$COUNTER.}
-                        echo "Added counter to end of "$NEW""
                         ((COUNTER++))
                 fi
         else
@@ -113,13 +113,14 @@ while [[ $X = false ]] ;do
                         echo "Copied "$ORG" to "$NEW""
                         echo "Copied "$ORG" too "$TO"/"$NEW"" >> /root/statfiles.txt
 			if [[ "$TYPE" == "image"* ]] ;then
-				((JCOPIED++))
+				RETURNVAL="1"
 			else
-				((MCOPIED++))
+				RETURNVAL="2"
 			fi
                 fi
                 X="true"
         fi
+return "$RETURNVAL"
 done
 
 }

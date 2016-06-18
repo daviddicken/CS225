@@ -1,1 +1,76 @@
 #!/bin/bash
+. ~/projects/CS225/library
+trap "trapCleanup" SIGINT SIGTERM
+echo "Please enter the path to the directory containing the media fies that you would like sorted:"
+read MEDIAdir
+exifToolInstall
+FINALDIR=$( getFinalFolder )
+SCRIPTNAME=${0##*/}
+#MEDIAdir=/root/finalfiles   #remove after you un comment read MEDIAdir
+LIST=$(ls $MEDIAdir)
+TMP=$(mktemp -d)
+
+while getopts :fdh opt ;do
+	case $opt in 
+		f) FORCE='true' ;;
+		d) set -x ;;
+		h) echo "Usage: $SCRIPTNAME [options]"
+		   echo " "
+		   echo "Options:"
+		   echo " -f forces files to be moved instead of copied."
+		   echo " -d turns debugging on."
+		   echo " -h prints out help page."
+		   exit 0
+		;;
+		*) echo "Invalid Option: Try '$SCRIPTNAME -h' for more information."
+		   exit 1
+		;;
+	esac
+done
+shift $(($OPTIND-1))
+
+### MAIN LOOP
+for LINE in $LIST ;do
+	LOCATION="$MEDIAdir"/"$LINE"
+	echo "Processing "$LINE""	
+	unset MAKE MODEL TYPE CREATED
+
+	TYPE=$( getType "$LOCATION" ) 
+	if [[ ( "$TYPE" == "image"* || "$TYPE" == "video"* ) ]] ;then
+		
+		MAKE=$( getMake "$LOCATION" )
+		#next two lines capitalize the 1st letter making it more uniform
+		declare -c MAKE        
+		MAKE=$MAKE		
+
+		if [[ -z $MAKE ]] ;then
+			MAKE="Unknown"
+		fi
+
+		MODEL=$( getModel "$LOCATION" )
+		if [[ -z $MODEL ]] ;then
+			MODEL="Unknown"
+		fi
+		
+		CREATED=$( getCreate "$LOCATION" ) 
+		if [[ -z $CREATED ]] ;then
+			CREATED=$( getMod "$LOCATION" ) 
+		fi
+	       
+	        EXT=$( getExt "$LOCATION" )
+		NEWNAME=$( getNewName "$CREATED" "$MAKE" "$MODEL" "$EXT" )
+		copy2temp "$LINE" "$NEWNAME" "$TMP" "$LOCATION" "$TYPE" 
+	fi
+done
+
+finalMove "$TMP" "$MEDIAdir" "$FINALDIR"
+
+if [[ $FORCE = true ]] ;then
+	removeOld "$MEDIAdir"
+fi
+
+cleanup
+output
+
+
+

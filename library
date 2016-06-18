@@ -103,7 +103,7 @@ while [[ $X = false ]] ;do
 			fi
                 else
 			echo "Adding "$COUNTER" to the end of "$NEW"."
-                        NEW=${NEW/_*./_$COUNTER.}
+                        NEW=${NEW/_*./_$COUNTER.} #### FIX###################
                         ((COUNTER++))
                 fi
         else
@@ -120,15 +120,14 @@ while [[ $X = false ]] ;do
                 fi
                 X="true"
         fi
-return "$RETURNVAL"
 done
-
+return $RETURNVAL
 }
 
 output()
 {
 JCOPY=$1 MCOPY=$2 JSAME=$3 MSAME=$4
-echo "The number of JPEGs copied/moved:		"$JCOPY""
+echo "The number of JPEGs copied/moved:	"$JCOPY""
 echo "The number of movies copied/moved:	"$MCOPY""
 echo "The number of JPEGs that were the same and not copied:		"$JSAME""
 echo "The number of movies that were the same and were not copied:	"$MSAME""

@@ -60,8 +60,8 @@ for LINE in $LIST ;do
 	       
 	        EXT=$( getExt "$LOCATION" )
 		NEWNAME=$( getNewName "$CREATED" "$MAKE" "$MODEL" "$EXT" )
-		RESULT=$( copy2temp "$LINE" "$NEWNAME" "$TMP" "$LOCATION" "$TYPE" )
-		case $RESULT in
+		 copy2temp "$LINE" "$NEWNAME" "$TMP" "$LOCATION" "$TYPE"
+		case $? in
 			1) ((JCOPY++)) ;;
 			2) ((MCOPY++)) ;;
 			3) ((JSAME++)) ;;

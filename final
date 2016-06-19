@@ -2,11 +2,11 @@
 . ~/projects/CS225/library
 trap "trapCleanup" SIGINT SIGTERM
 echo "Please enter the path to the directory containing the media fies that you would like sorted:"
-read MEDIAdir
+#read MEDIAdir
 exifToolInstall
 FINALDIR=$( getFinalFolder )
 SCRIPTNAME=${0##*/}
-#MEDIAdir=/root/finalfiles   #remove after you un comment read MEDIAdir
+MEDIAdir=/root/finalfiles   #remove after you un comment read MEDIAdir
 LIST=$(ls $MEDIAdir)
 TMP=$(mktemp -d)
 JCOPY="0" MCOPY="0" JSAME="0" MSAME="0"

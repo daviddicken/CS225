@@ -73,9 +73,9 @@ getNewName()
 DATE=$1 MAKE=$2 MODEL=$3 EXT=$4 ARR=($MODEL)
 
 if [[ $MAKE = $ARR ]] ;then
-        echo ""$DATE"_"$MODEL"_."$EXT"" | tr ' ' '-'
+        echo ""$DATE"_"$MODEL"."$EXT"" | tr ' ' '-'
 else
-        echo ""$DATE"_"$MAKE"-"$MODEL"_."$EXT"" | tr ' ' '-'
+        echo ""$DATE"_"$MAKE"-"$MODEL"."$EXT"" | tr ' ' '-'
 fi
 }
 
@@ -103,7 +103,7 @@ while [[ $X = false ]] ;do
 			fi
                 else
 			echo "Adding "$COUNTER" to the end of "$NEW"."
-                        NEW=${NEW/_*./_$COUNTER.} #### FIX###################
+                        NEW=${NEW/./_$COUNTER.} #### FIX###################
                         ((COUNTER++))
                 fi
         else

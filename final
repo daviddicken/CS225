@@ -3,7 +3,9 @@
 trap "trapCleanup" SIGINT SIGTERM
 echo "Please enter the path to the directory containing the media fies that you would like sorted:"
 #read MEDIAdir
+
 exifToolInstall
+
 FINALDIR=$( getFinalFolder )
 SCRIPTNAME=${0##*/}
 MEDIAdir=/root/finalfiles   #remove after you un comment read MEDIAdir

@@ -64,7 +64,7 @@ YEAR=${DATE%%'-'*} ;    DATE=${DATE#*'-'}
 MONTH=${DATE%%'-'*};    DATE=${DATE#*'-'}
 DAY=${DATE%%'_'*}
 
-mkdir -p "$TEMP"/"$YEAR"/"$MONTH"/"$DAY"
+mkdir -p ~/"$TEMP"/"$YEAR"/"$MONTH"/"$DAY"
 }
 
 ## Create new name for current file
@@ -84,7 +84,7 @@ copy2temp()
 {
 ORG=$1 NEW=$2 TEMP=$3 FROM=$4 TYPE=$5 X="false" COUNTER="1" RETURNVAL="0"
 makeDirs $NEW $TEMP
-TO="$TEMP"/"$YEAR"/"$MONTH"/"$DAY"
+TO=~/"$TEMP"/"$YEAR"/"$MONTH"/"$DAY"
 touch ~/removelist.txt
 
 while [[ $X = false ]] ;do
@@ -103,7 +103,7 @@ while [[ $X = false ]] ;do
 			fi
                 else
 			echo "Adding "$COUNTER" to the end of "$NEW"."
-                        NEW=${NEW/./_$COUNTER.} #### FIX###################
+                        NEW=${NEW/./_$COUNTER.} 
                         ((COUNTER++))
                 fi
         else
@@ -173,7 +173,7 @@ rm -f /root/tmp/removelist
 
 trapCleanup()
 {
-rm -Rf $TMP
+rm -Rf "$TMP"
 rm -f /root/tmp/removelist
 exit 1
 }

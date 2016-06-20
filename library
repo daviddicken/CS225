@@ -4,7 +4,10 @@
 ###################### exiftool functions ###################################
 exifToolInstall()
 {
+type exiftool > /dev/null
+if [[ $? > "0" ]] ;then
 yum install -y perl-Image-ExifTool.noarch
+fi
 
 }
 

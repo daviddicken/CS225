@@ -10,7 +10,6 @@ FINALDIR=$( getFinalFolder )
 SCRIPTNAME=${0##*/}
 MEDIAdir=/root/finalfiles   #remove after you un comment read MEDIAdir
 LIST=$(ls $MEDIAdir)
-#TMP=$(mktemp -d)
 TMP=$( getFinalFolder )
 JCOPY="0" MCOPY="0" JSAME="0" MSAME="0"
 
@@ -72,8 +71,6 @@ for LINE in $LIST ;do
 		esac 
 	fi
 done
-
-#finalMove "$TMP" "$MEDIAdir" "$FINALDIR"
 
 if [[ $FORCE = true ]] ;then
 	removeOld "$MEDIAdir"

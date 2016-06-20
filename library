@@ -148,12 +148,6 @@ done
 echo "$FOLDER"
 }
 
-finalMove()
-{
-FROM=$1 LOC=~ TO=$3
-mv "$FROM" "$LOC"/"$TO"
-}
-
 removeOld()
 {
 ORGDIR=$1
@@ -170,7 +164,6 @@ cleanup
 
 cleanup()
 {
-rm -Rf "$TMP"
 rm -f /root/tmp/removelist
 }
 

@@ -1,17 +1,18 @@
 #!/bin/bash
 . ~/projects/CS225/library
+
 trap "trapCleanup" SIGINT SIGTERM
 echo "Please enter the path to the directory containing the media fies that you would like sorted:"
 #read MEDIAdir
 
-exifToolInstall
+exifToolInstall              # Check if exiftool is installed an in stall it if needed
 
-FINALDIR=$( getFinalFolder )
+FINALDIR=$( getFinalFolder ) # Create a directory to store copies of media
 SCRIPTNAME=${0##*/}
-MEDIAdir=/root/finalfiles   #remove after you un comment read MEDIAdir
-LIST=$(ls $MEDIAdir)
-TMP=$( getFinalFolder )
-JCOPY="0" MCOPY="0" JSAME="0" MSAME="0"
+MEDIAdir=/root/finalfiles    # Remove after you un comment read MEDIAdir
+LIST=$(ls $MEDIAdir)         # Creates a list of filenames in directory passed in
+
+JCOPY="0" MCOPY="0" JSAME="0" MSAME="0" # Counters
 
 while getopts :fdh opt ;do
 	case $opt in 
@@ -36,13 +37,15 @@ shift $(($OPTIND-1))
 for LINE in $LIST ;do
 	LOCATION="$MEDIAdir"/"$LINE"
 	echo "Processing "$LINE""	
-	unset MAKE MODEL TYPE CREATED
+	unset MAKE MODEL TYPE CREATED  # Clear variables 
 
+	# Grab the type of file; check if it is a image or video; if it is get other info from file;
+	# If not a image or video move on to the next file
 	TYPE=$( getType "$LOCATION" ) 
 	if [[ ( "$TYPE" == "image"* || "$TYPE" == "video"* ) ]] ;then
 		
 		MAKE=$( getMake "$LOCATION" )
-		#next two lines capitalize the 1st letter making it more uniform
+		# Next two lines capitalize the 1st letter making it more uniform
 		declare -c MAKE        
 		MAKE=$MAKE		
 
@@ -55,15 +58,17 @@ for LINE in $LIST ;do
 			MODEL="Unknown"
 		fi
 		
-		CREATED=$( getCreate "$LOCATION" ) 
+		CREATED=$( getCreate "$LOCATION" )      
 		if [[ -z $CREATED ]] ;then
-			CREATED=$( getMod "$LOCATION" ) 
+			CREATED=$( getMod "$LOCATION" )  # If no create date get date last modified 
 		fi
 	       
-	        EXT=$( getExt "$LOCATION" )
-		NEWNAME=$( getNewName "$CREATED" "$MAKE" "$MODEL" "$EXT" )
-		 copy2temp "$LINE" "$NEWNAME" "$TMP" "$LOCATION" "$TYPE"
-		case $? in
+	        EXT=$( getExt "$LOCATION" )              # Convert the extention to lowercase letters
+		NEWNAME=$( getNewName "$CREATED" "$MAKE" "$MODEL" "$EXT" )   # Create a new filename for file
+		copy2temp "$LINE" "$NEWNAME" "$FINALDIR" "$LOCATION" "$TYPE"; COUNT=$? # Copy file w/ new name
+		
+		# Use return value of copy2temp to increment the correct counter
+		case $COUNT in
 			1) ((JCOPY++)) ;;
 			2) ((MCOPY++)) ;;
 			3) ((JSAME++)) ;;
@@ -72,6 +77,7 @@ for LINE in $LIST ;do
 	fi
 done
 
+# If force option was selected remove all old files that where copied
 if [[ $FORCE = true ]] ;then
 	removeOld "$MEDIAdir"
 fi

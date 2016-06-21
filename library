@@ -8,7 +8,6 @@ type exiftool > /dev/null
 if [[ $? > "0" ]] ;then
 yum install -y perl-Image-ExifTool.noarch
 fi
-
 }
 
 getAll() # want to figure out how to use this instead if time allows
@@ -53,6 +52,7 @@ getMod()
 FILE=$1
 exiftoolUse $FILE FileModifyDate | tr ' ' '_' | tr ':' '-'
 }
+
 getExt()
 {
 FILE=$1
@@ -82,19 +82,19 @@ else
 fi
 }
 
-## Checks if file exsist and is the same changes name and if it is different then copies file.
+## Checks if file exsist; if the same changes name; if it is different then copies file.
 copy2temp()
 {
 ORG=$1 NEW=$2 TEMP=$3 FROM=$4 TYPE=$5 X="false" COUNTER="1" RETURNVAL="0"
-makeDirs $NEW $TEMP
+makeDirs $NEW $TEMP              
 TO=~/"$TEMP"/"$YEAR"/"$MONTH"/"$DAY"
-touch ~/removelist.txt
+touch ~/removelist.txt            # List to track files copied for removal later
 
 while [[ $X = false ]] ;do
         if [[ -e "$TO"/"$NEW" ]] ;then
-
-                TOFILE=`md5sum "$TO"/"$NEW" | awk '{ print $1 }'`
-                FROMFILE=`md5sum "$FROM" | awk '{ print $1 }'` #($(md5sum "$ORG"))
+		
+                TOFILE=`md5sum "$TO"/"$NEW" | awk '{ print $1 }'` #($(md5sum "$ORG"))
+                FROMFILE=`md5sum "$FROM" | awk '{ print $1 }'` # ^would^have^worked^2
                 if [[ $TOFILE = $FROMFILE ]] ;then
                         X="true"
                         echo ""$ORG" not copied"
@@ -127,6 +127,7 @@ done
 return $RETURNVAL
 }
 
+# Final output of number of files copied
 output()
 {
 JCOPY=$1 MCOPY=$2 JSAME=$3 MSAME=$4
@@ -135,6 +136,8 @@ echo "The number of movies copied/moved:	"$MCOPY""
 echo "The number of JPEGs that were the same and not copied:		"$JSAME""
 echo "The number of movies that were the same and were not copied:	"$MSAME""
 }
+
+# Check if Photo directory already exsist; if it does add a counter and check again
 getFinalFolder()
 {
 COUNTER=" "
@@ -148,6 +151,7 @@ done
 echo "$FOLDER"
 }
 
+# Removes every file that was successfuly copied
 removeOld()
 {
 ORGDIR=$1
@@ -160,17 +164,17 @@ cleanup
 }
 
 
-################# CLEANUP AND MISC FUNCTIONS ###########################
+################# CLEANUP FUNCTIONS ###########################
 
 cleanup()
 {
-rm -f /root/tmp/removelist
+rm -f /root/removelist.txt
 }
 
 trapCleanup()
 {
-rm -Rf "$TMP"
-rm -f /root/tmp/removelist
+rm -Rf "$FINALDIR"
+rm -f /root/removelist.txt
 exit 1
 }
 

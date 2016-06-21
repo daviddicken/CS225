@@ -2,23 +2,13 @@
 . ~/projects/CS225/library
 
 trap "trapCleanup" SIGINT SIGTERM
-echo "Please enter the path to the directory containing the media fies that you would like sorted:"
-#read MEDIAdir
 
-exifToolInstall              # Check if exiftool is installed an in stall it if needed
-
-FINALDIR=$( getFinalFolder ) # Create a directory to store copies of media
 SCRIPTNAME=${0##*/}
-MEDIAdir=/root/finalfiles    # Remove after you un comment read MEDIAdir
-LIST=$(ls $MEDIAdir)         # Creates a list of filenames in directory passed in
-
-JCOPY="0" MCOPY="0" JSAME="0" MSAME="0" # Counters
-
 while getopts :fdh opt ;do
 	case $opt in 
 		f) FORCE='true' ;;
 		d) set -x ;;
-		h) echo "Usage: $SCRIPTNAME [options]"
+		h) echo "Usage: ${0##*/} [options]"
 		   echo " "
 		   echo "Options:"
 		   echo " -f forces files to be moved instead of copied."
@@ -26,12 +16,22 @@ while getopts :fdh opt ;do
 		   echo " -h prints out help page."
 		   exit 0
 		;;
-		*) echo "Invalid Option: Try '$SCRIPTNAME -h' for more information."
+		*) echo "Invalid Option: Try '${0##*/} -h' for more information."
 		   exit 1
 		;;
 	esac
 done
 shift $(($OPTIND-1))
+
+echo "Please enter the path to the directory containing the media fies that you would like sorted:"
+#read MEDIAdir                # Un comment line when done testing program
+MEDIAdir=/root/finalfiles     # Remove after you un comment read MEDIAdir
+LIST=$(ls $MEDIAdir)          # Creates a list of filenames in directory passed in
+FINALDIR=$( getFinalFolder )  # Create a directory to store copies of media
+exifToolInstall               # Check if exiftool is installed an in stall it if needed
+
+
+JCOPY="0" MCOPY="0" JSAME="0" MSAME="0" # Counters
 
 ### MAIN LOOP
 for LINE in $LIST ;do

@@ -30,7 +30,6 @@ LIST=$(ls $MEDIAdir)          # Creates a list of filenames in directory passed 
 FINALDIR=$( getFinalFolder )  # Create a directory to store copies of media
 exifToolInstall               # Check if exiftool is installed an in stall it if needed
 
-
 JCOPY="0" MCOPY="0" JSAME="0" MSAME="0" # Counters
 
 ### MAIN LOOP
@@ -84,6 +83,4 @@ fi
 
 cleanup
 output "$JCOPY" "$MCOPY" "$JSAME" "$MSAME"
-
-
 

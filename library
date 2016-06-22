@@ -4,163 +4,163 @@
 ###################### exiftool functions ###################################
 exifToolInstall()
 {
-type exiftool > /dev/null
-if [[ $? > "0" ]] ;then
-yum install -y perl-Image-ExifTool.noarch
-fi
+	type exiftool > /dev/null
+	if [[ $? > "0" ]] ;then
+		yum install -y perl-Image-ExifTool.noarch
+	fi
 }
 
 getAll() # want to figure out how to use this instead if time allows
 {
-FILE=$1
-exiftool -T -filename -MIMEType -Make -Model -CreateDate -FileModifyDate $FILE
+	FILE=$1
+	exiftool -T -filename -MIMEType -Make -Model -CreateDate -FileModifyDate $FILE
 }
 
 exiftoolUse()
 {
-FILE=$1
-WORD=$2
-exiftool -s $FILE | grep -w "$WORD" | awk -F ': ' '{ print $2 }'
+	FILE=$1
+	WORD=$2
+	exiftool -s $FILE | grep -w "$WORD" | awk -F ': ' '{ print $2 }'
 }
 
 getMake()
 {
-FILE=$1
-exiftoolUse $FILE Make
+	FILE=$1
+	exiftoolUse $FILE Make
 }
 
 getModel()
 {
-FILE=$1
-exiftoolUse $FILE Model
+	FILE=$1
+	exiftoolUse $FILE Model
 }
 
 getType()
 {
-FILE=$1
-exiftoolUse $FILE MIMEType
+	FILE=$1
+	exiftoolUse $FILE MIMEType
 }
 
 getCreate()
 {
-FILE=$1
-exiftoolUse $FILE CreateDate | tr ' ' '_' | tr ':' '-'
+	FILE=$1
+	exiftoolUse $FILE CreateDate | tr ' ' '_' | tr ':' '-'
 }
 
 getMod()
 {
-FILE=$1
-exiftoolUse $FILE FileModifyDate | tr ' ' '_' | tr ':' '-'
+	FILE=$1
+	exiftoolUse $FILE FileModifyDate | tr ' ' '_' | tr ':' '-'
 }
 
 getExt()
 {
-FILE=$1
-exiftool -s $FILE | grep -w "FileName" | awk -F '.' '{ print tolower($2) }'
+	FILE=$1
+	exiftool -s $FILE | grep -w "FileName" | awk -F '.' '{ print tolower($2) }'
 }
 ###################### FUNCTIONS TO COPY FILES ##############################
 ## Make directory path for current file
 makeDirs()
 {
-DATE=$1 TEMP=$2
-YEAR=${DATE%%'-'*} ;    DATE=${DATE#*'-'}
-MONTH=${DATE%%'-'*};    DATE=${DATE#*'-'}
-DAY=${DATE%%'_'*}
+	DATE=$1 TEMP=$2
+	YEAR=${DATE%%'-'*} ;    DATE=${DATE#*'-'}
+	MONTH=${DATE%%'-'*};    DATE=${DATE#*'-'}
+	DAY=${DATE%%'_'*}
 
-mkdir -p ~/"$TEMP"/"$YEAR"/"$MONTH"/"$DAY"
+	mkdir -p ~/"$TEMP"/"$YEAR"/"$MONTH"/"$DAY"
 }
 
 ## Create new name for current file
 getNewName()
 {
-DATE=$1 MAKE=$2 MODEL=$3 EXT=$4 ARR=($MODEL)
+	DATE=$1 MAKE=$2 MODEL=$3 EXT=$4 ARR=($MODEL)
 
-if [[ $MAKE = $ARR ]] ;then
-        echo ""$DATE"_"$MODEL"."$EXT"" | tr ' ' '-'
-else
-        echo ""$DATE"_"$MAKE"-"$MODEL"."$EXT"" | tr ' ' '-'
-fi
+	if [[ $MAKE = $ARR ]] ;then
+        	echo ""$DATE"_"$MODEL"."$EXT"" | tr ' ' '-'
+	else
+        	echo ""$DATE"_"$MAKE"-"$MODEL"."$EXT"" | tr ' ' '-'
+	fi
 }
 
 ## Checks if file exsist; if the same changes name; if it is different then copies file.
 copy2temp()
 {
-ORG=$1 NEW=$2 TEMP=$3 FROM=$4 TYPE=$5 X="false" COUNTER="1" RETURNVAL="0"
-makeDirs $NEW $TEMP              
-TO=~/"$TEMP"/"$YEAR"/"$MONTH"/"$DAY"
-touch ~/removelist.txt            # List to track files copied for removal later
+	ORG=$1 NEW=$2 TEMP=$3 FROM=$4 TYPE=$5 X="false" COUNTER="1" RETURNVAL="0"
+	makeDirs $NEW $TEMP              
+	TO=~/"$TEMP"/"$YEAR"/"$MONTH"/"$DAY"
+	touch ~/removelist.txt            # List to track files copied for removal later
 
-while [[ $X = false ]] ;do
-        if [[ -e "$TO"/"$NEW" ]] ;then
+	while [[ $X = false ]] ;do
+        	if [[ -e "$TO"/"$NEW" ]] ;then
 		
-                TOFILE=`md5sum "$TO"/"$NEW" | awk '{ print $1 }'` #($(md5sum "$ORG"))
-                FROMFILE=`md5sum "$FROM" | awk '{ print $1 }'` # ^would^have^worked^2
-                if [[ $TOFILE = $FROMFILE ]] ;then
-                        X="true"
-                        echo ""$ORG" not copied"
-                        echo "$ORG" >> ~/removelist.txt
-			if [[ "$TYPE" == "image"* ]] ;then
-				RETURNVAL="3"
-			else
-				RETURNVAL="4"
-			fi
-                else
-			echo "Adding "$COUNTER" to the end of "$NEW"."
-                        NEW=${NEW/./_$COUNTER.} 
-                        ((COUNTER++))
-                fi
-        else
-                cp "$FROM" "$TO"/"$NEW"
-                if [[ $? = 0 ]] ;then
-                        echo "$ORG" >> ~/removelist.txt
-                        echo "Copied "$ORG" to "$NEW""
-                        echo "Copied "$ORG" too "$TO"/"$NEW"" >> /root/statfiles.txt
-			if [[ "$TYPE" == "image"* ]] ;then
-				RETURNVAL="1"
-			else
-				RETURNVAL="2"
-			fi
-                fi
-                X="true"
-        fi
-done
-return $RETURNVAL
+                	TOFILE=`md5sum "$TO"/"$NEW" | awk '{ print $1 }'` #($(md5sum "$ORG"))
+                	FROMFILE=`md5sum "$FROM" | awk '{ print $1 }'` # ^would^have^worked^2
+                	if [[ $TOFILE = $FROMFILE ]] ;then
+                        	X="true"
+                        	echo ""$ORG" not copied"
+                        	echo "$ORG" >> ~/removelist.txt
+				if [[ "$TYPE" == "image"* ]] ;then
+					RETURNVAL="3"
+				else
+					RETURNVAL="4"
+				fi
+                	else
+				echo "Adding "$COUNTER" to the end of "$NEW"."
+                        	NEW=${NEW/./_$COUNTER.} 
+                        	((COUNTER++))
+                	fi
+        	else
+                	cp "$FROM" "$TO"/"$NEW"
+                	if [[ $? = 0 ]] ;then
+                        	echo "$ORG" >> ~/removelist.txt
+                        	echo "Copied "$ORG" to "$NEW""
+                        	echo "Copied "$ORG" too "$TO"/"$NEW"" >> /root/statfiles.txt
+				if [[ "$TYPE" == "image"* ]] ;then
+					RETURNVAL="1"
+				else
+					RETURNVAL="2"
+				fi
+                	fi
+                	X="true"
+        	fi
+	done
+	return $RETURNVAL
 }
 
 # Final output of number of files copied
 output()
 {
-JCOPY=$1 MCOPY=$2 JSAME=$3 MSAME=$4
-echo "The number of JPEGs copied/moved:	"$JCOPY""
-echo "The number of movies copied/moved:	"$MCOPY""
-echo "The number of JPEGs that were the same and not copied:		"$JSAME""
-echo "The number of movies that were the same and were not copied:	"$MSAME""
+	JCOPY=$1 MCOPY=$2 JSAME=$3 MSAME=$4
+	echo "The number of JPEGs copied/moved:	"$JCOPY""
+	echo "The number of movies copied/moved:	"$MCOPY""
+	echo "The number of JPEGs that were the same and not copied:		"$JSAME""
+	echo "The number of movies that were the same and were not copied:	"$MSAME""
 }
 
 # Check if Photo directory already exsist; if it does add a counter and check again
 getFinalFolder()
 {
-COUNTER=" "
-FOLDER="Photo"
-HOME=~
-while [[ -d "$HOME"/"$FOLDER" ]] ;do
-        ((COUNTER++))
-        FOLDER="Photo"
-        FOLDER="$FOLDER""$COUNTER"
-done
-echo "$FOLDER"
+	COUNTER=" "
+	FOLDER="Photo"
+	HOME=~
+	while [[ -d "$HOME"/"$FOLDER" ]] ;do
+        	((COUNTER++))
+        	FOLDER="Photo"
+        	FOLDER="$FOLDER""$COUNTER"
+	done
+	echo "$FOLDER"
 }
 
 # Removes every file that was successfuly copied
 removeOld()
 {
-ORGDIR=$1
-RML=$( cat ~/removelist.txt )
-for LINE in $RML ;do
-	echo "Deleting "$LINE""
-        rm -f "$ORGDIR"/"$LINE"
-done
-cleanup
+	ORGDIR=$1
+	RML=$( cat ~/removelist.txt )
+	for LINE in $RML ;do
+		echo "Deleting "$LINE""
+        	rm -f "$ORGDIR"/"$LINE"
+	done
+	cleanup
 }
 
 
@@ -168,14 +168,14 @@ cleanup
 
 cleanup()
 {
-rm -f /root/removelist.txt
+	rm -f /root/removelist.txt
 }
 
 trapCleanup()
 {
-rm -Rf "$FINALDIR"
-rm -f /root/removelist.txt
-exit 1
+	rm -Rf "$FINALDIR"
+	rm -f /root/removelist.txt
+	exit 1
 }
 
 

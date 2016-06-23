@@ -85,10 +85,12 @@ getNewName()
 ## Checks if file exsist; if the same changes name; if it is different then copies file.
 copy2temp()
 {
-	ORG=$1 NEW=$2 TEMP=$3 FROM=$4 TYPE=$5 X="false" COUNTER="1" RETURNVAL="0"
+	ORG=$1 NEW=$2 TEMP=$3 FROM=$4 TYPE=$5 RML=$6
+	X="false"      # Var to allow loop to exit when duplicate found or successfully copied
+	COUNTER="1"    # Counter to add to filename if filename matches another filename
+	RETURNVAL="0"  # A value to be returned and used by main depending on what file is
 	makeDirs $NEW $TEMP              
 	TO=~/"$TEMP"/"$YEAR"/"$MONTH"/"$DAY"
-	touch ~/removelist.txt            # List to track files copied for removal later
 
 	while [[ $X = false ]] ;do
         	if [[ -e "$TO"/"$NEW" ]] ;then
@@ -98,7 +100,7 @@ copy2temp()
                 	if [[ $TOFILE = $FROMFILE ]] ;then
                         	X="true"
                         	echo ""$ORG" not copied"
-                        	echo "$ORG" >> ~/removelist.txt
+                        	echo "$ORG" >> "$RML" 
 				if [[ "$TYPE" == "image"* ]] ;then
 					RETURNVAL="3"
 				else
@@ -112,9 +114,9 @@ copy2temp()
         	else
                 	cp "$FROM" "$TO"/"$NEW"
                 	if [[ $? = 0 ]] ;then
-                        	echo "$ORG" >> ~/removelist.txt
+                        	echo "$ORG" >> "$RML" 
                         	echo "Copied "$ORG" to "$NEW""
-                        	echo "Copied "$ORG" too "$TO"/"$NEW"" >> /root/statfiles.txt
+                        	#echo "Copied "$ORG" too "$TO"/"$NEW"" >> /root/statfiles.txt
 				if [[ "$TYPE" == "image"* ]] ;then
 					RETURNVAL="1"
 				else
@@ -154,8 +156,8 @@ getFinalFolder()
 # Removes every file that was successfuly copied
 removeOld()
 {
-	ORGDIR=$1
-	RML=$( cat ~/removelist.txt )
+	ORGDIR="$1"
+	RML="$( cat "$2" )" 
 	for LINE in $RML ;do
 		echo "Deleting "$LINE""
         	rm -f "$ORGDIR"/"$LINE"
@@ -167,14 +169,14 @@ removeOld()
 ################# CLEANUP FUNCTIONS ###########################
 
 cleanup()
-{
-	rm -f /root/removelist.txt
+{ 
+	rm -f "$RMLIST"
 }
 
 trapCleanup()
 {
 	rm -Rf "$FINALDIR"
-	rm -f /root/removelist.txt
+	rm -f "$RMLIST"
 	exit 1
 }
 

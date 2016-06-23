@@ -29,6 +29,7 @@ MEDIAdir=/root/finalfiles     # Remove after you un comment read MEDIAdir
 LIST=$(ls $MEDIAdir)          # Creates a list of filenames in directory passed in
 FINALDIR=$( getFinalFolder )  # Create a directory to store copies of media
 exifToolInstall               # Check if exiftool is installed an in stall it if needed
+RMLIST=$(mktemp)              # List of copied files for removal later
 
 JCOPY="0" MCOPY="0" JSAME="0" MSAME="0" # Counters
 
@@ -64,7 +65,7 @@ for LINE in $LIST ;do
 	       
 	        EXT=$( getExt "$LOCATION" )              # Convert the extention to lowercase letters
 		NEWNAME=$( getNewName "$CREATED" "$MAKE" "$MODEL" "$EXT" )   # Create a new filename for file
-		copy2temp "$LINE" "$NEWNAME" "$FINALDIR" "$LOCATION" "$TYPE"; COUNT=$? # Copy file w/ new name
+		copy2temp "$LINE" "$NEWNAME" "$FINALDIR" "$LOCATION" "$TYPE" "$RMLIST" ; COUNT=$? # Copy file w/ new name
 		
 		# Use return value of copy2temp to increment the correct counter
 		case $COUNT in
@@ -78,7 +79,7 @@ done
 
 # If force option was selected remove all old files that where copied
 if [[ $FORCE = true ]] ;then
-	removeOld "$MEDIAdir"
+	removeOld "$MEDIAdir" "$RMLIST"
 fi
 
 cleanup

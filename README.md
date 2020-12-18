@@ -1,2 +1,2 @@
-# CS225
+# BASH
 Projects for CS225
